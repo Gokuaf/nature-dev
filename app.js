@@ -1,4 +1,3 @@
-
 const express = require('express');
 const morgan = require('morgan');
 
@@ -7,29 +6,25 @@ const userRouter = require('./routes/userRoutes');
 
 const app = express();
 
-app.use(morgan('dev')); // log requests to the console
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev')); // log requests to the console
+}
+
 app.use(express.json()); // for parsing application/json/middleware
+app.use(express.static(`${__dirname}/public`)); // serve static files from public folder
 
 app.use((req, res, next) => {
   console.log('hello');
   next();
 });
 
-module.exports = app;
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
 
-
-
-
-
-
-
-
-
-
+// 3) ROUTES
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
-const port = 3000;
-app.listen(port, () => {
-  console.log('server running on port ${port}');
-});
+module.exports = app;
