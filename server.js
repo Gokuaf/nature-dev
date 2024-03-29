@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
+process.on('uncaughtExceptions', (err) => {
+  console.log('uncaught exceptions!');
+  console.log(err.name, err.message);
+  process.exit(1);
+});
+
+
 dotenv.config({ path: './config.env' });
 const app = require('./app');
 
@@ -22,8 +29,6 @@ mongoose
 
 // console.log(process.env);
 
-
-
 // const testTour = new Tour({
 //   name: 'The Park Camper',
 //   // rating: 4.7,
@@ -40,6 +45,17 @@ mongoose
 //   });
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`app running on port ${port}..`);
 });
+
+process.on('unhandledRejection', (err) => {
+  console.log('Server closed');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+
+
