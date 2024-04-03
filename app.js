@@ -2,9 +2,9 @@ const express = require('express');
 const morgan = require('morgan');
 
 const AppError = require('./utils/appError');
-const  globalErrorHandler = require('./controllers/errorController.js');
+const globalErrorHandler = require('./controllers/errorController.js');
 const tourRouter = require('./routes/tourRoutes');
-const userRouter = require('./routes/userRoutes');
+const userRouter = require('./routes/userRoutes.js');
 
 const app = express();
 
@@ -15,13 +15,9 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json()); // for parsing application/json/middleware
 app.use(express.static(`${__dirname}/public`)); // serve static files from public folder
 
-// app.use((req, res, next) => {
-//   console.log('hello');
-//   next();
-// });
-
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
+  // console.log(req.headers);
   next();
 });
 
